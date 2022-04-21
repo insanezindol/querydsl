@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: querydsl-test-app
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+#        show_sql: true
+#        format_sql: true
+
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem://localhost/~/test;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
