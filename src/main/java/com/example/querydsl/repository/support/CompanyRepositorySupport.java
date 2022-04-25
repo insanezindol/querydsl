@@ -39,7 +39,7 @@ public class CompanyRepositorySupport extends QuerydslRepositorySupport {
                         ))
 //                .select(member.id, member.age, member.name)
                 .from(company)
-                .join(company.member, member)
+                .join(company.members, member)
                 .where(company.name.eq(name))
                 .fetch();
     }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Company {
@@ -19,16 +20,15 @@ public class Company {
 
     private String address;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "store_id")
-    private List<Member> member = new ArrayList<>();
+    @OneToMany(mappedBy = "company")
+    private List<Member> members = new ArrayList<>();
 
     @Builder
-    public Company(Long id, String name, String address, List<Member> member) {
+    public Company(Long id, String name, String address, List<Member> members) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.member = member;
+        this.members = members;
     }
 
 }

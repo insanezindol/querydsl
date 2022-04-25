@@ -3,6 +3,7 @@ package com.example.querydsl;
 import com.example.querydsl.entity.Member;
 import com.example.querydsl.entity.Company;
 import com.example.querydsl.repository.CompanyRepository;
+import com.example.querydsl.repository.MemberRepository;
 import com.example.querydsl.repository.support.CompanyRepositorySupport;
 import com.example.querydsl.vo.MemberVO;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +27,9 @@ public class StoreRepositorySupportTest {
 
     @Autowired
     CompanyRepository companyRepository;
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Autowired
     CompanyRepositorySupport companyRepositorySupport;
@@ -64,26 +68,34 @@ public class StoreRepositorySupportTest {
         final String address = "주소4";
         final String name = "스토어4";
 
-        Member member1 = Member.builder()
-                .id(1L)
-                .name(memberName1)
-                .age(age1)
-                .build();
-
-        Member member2 = Member.builder()
-                .id(2L)
-                .name(memberName2)
-                .age(age2)
-                .build();
-
         Company company = Company.builder()
-                .id(1L)
                 .address(address)
                 .name(name)
-                .member(Arrays.asList(member1, member2))
                 .build();
-
+        System.out.println("test1");
         companyRepository.save(company);
+        System.out.println("test2");
+
+        Member member1 = Member.builder()
+                .name(memberName1)
+                .age(age1)
+                .company(company)
+                .build();
+        System.out.println("test3");
+        memberRepository.save(member1);
+        System.out.println("test4");
+
+        Member member2 = Member.builder()
+                .name(memberName2)
+                .age(age2)
+                .company(company)
+                .build();
+        System.out.println("test5");
+        memberRepository.save(member2);
+        System.out.println("test6");
+
+        company.setMembers(Arrays.asList(member1, member2));
+        System.out.println("test7");
 
         //when
         List<MemberVO> members = companyRepositorySupport.findMembersByName(name);
