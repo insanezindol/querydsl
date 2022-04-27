@@ -1,17 +1,22 @@
 package com.example.querydsl.service;
 
 import com.example.querydsl.entity.Store;
+import com.example.querydsl.repository.SchoolRepository;
 import com.example.querydsl.repository.StoreRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class TestService {
 
-    @Autowired
-    StoreRepository storeRepository;
+    private final StoreRepository storeRepository;
+
+    private final SchoolRepository schoolRepository;
 
     public List<Store> getStore() {
         return storeRepository.findAll();
@@ -26,14 +31,22 @@ public class TestService {
     }
 
     public List<Store> searchStore(String name) {
-        storeRepository.findByNameContaining(name);
-        storeRepository.findByNameContains(name);
-        storeRepository.findByNameIsContaining(name);
-        storeRepository.findByNameLike('%'+name+'%');
-        storeRepository.findByNameStartsWith(name);
-        storeRepository.findByNameEndsWith(name);
-        storeRepository.findByNameContainingIgnoreCase(name);
-        storeRepository.findByNameNotContaining(name);
+        List<Store> searchA = storeRepository.findByNameContaining(name);
+        log.info("searchA : {}", searchA.size());
+        List<Store> searchB = storeRepository.findByNameContains(name);
+        log.info("searchB : {}", searchB.size());
+        List<Store> searchC = storeRepository.findByNameIsContaining(name);
+        log.info("searchC : {}", searchC.size());
+        List<Store> searchD = storeRepository.findByNameLike('%' + name + '%');
+        log.info("searchD : {}", searchD.size());
+        List<Store> searchE = storeRepository.findByNameStartsWith(name);
+        log.info("searchE : {}", searchE.size());
+        List<Store> searchF = storeRepository.findByNameEndsWith(name);
+        log.info("searchF : {}", searchF.size());
+        List<Store> searchG = storeRepository.findByNameContainingIgnoreCase(name);
+        log.info("searchG : {}", searchG.size());
+        List<Store> searchH = storeRepository.findByNameNotContaining(name);
+        log.info("searchH : {}", searchH.size());
         return null;
     }
 

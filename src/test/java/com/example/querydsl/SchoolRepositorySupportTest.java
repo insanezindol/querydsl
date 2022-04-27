@@ -4,17 +4,22 @@ import com.example.querydsl.entity.School;
 import com.example.querydsl.entity.Student;
 import com.example.querydsl.repository.SchoolRepository;
 import com.example.querydsl.repository.StudentRepository;
-import com.example.querydsl.repository.support.SchoolRepositorySupport;
 import com.example.querydsl.vo.StudentVo;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,9 +36,6 @@ public class SchoolRepositorySupportTest {
     @Autowired
     StudentRepository studentRepository;
 
-    @Autowired
-    SchoolRepositorySupport schoolRepositorySupport;
-
     @Test
     void findOneByNameTest() {
         //given
@@ -48,7 +50,7 @@ public class SchoolRepositorySupportTest {
         schoolRepository.save(school);
 
         //when
-        School resultBySchool = schoolRepositorySupport.findOneByName(name);
+        School resultBySchool = schoolRepository.findOneByName(name);
 
         //then
         Assertions.assertEquals(name, resultBySchool.getName());
@@ -95,12 +97,53 @@ public class SchoolRepositorySupportTest {
         System.out.println("test 8");
 
         //when
-        List<StudentVo> students = schoolRepositorySupport.findStudentsByName(name);
+        List<StudentVo> students = schoolRepository.findStudentsByName(name);
 
         //then
         assertThat(students.size()).isGreaterThan(0);
         assertThat(students.get(0).getName()).isEqualTo(studentName1);
         assertThat(students.get(1).getName()).isEqualTo(studentName2);
+    }
+
+    @Test
+    @DisplayName("등록된 학생 페이징 조회 테스트")
+    void findPagingStudentsByNameTest() {
+        //given
+        final String name = "학생";
+        final int page = 0; // 페이지 번호 : 0부터 시작
+        final int size = 5; // 페이지당 컨텐츠 수
+
+        List<Student> students = new ArrayList<>();
+        for(int i=0; i<100; i++){
+            Student student = Student.builder()
+                    .name(name + i)
+                    .age(i+10)
+                    .build();
+            students.add(student);
+        }
+        studentRepository.saveAll(students);
+
+        Sort.Order order = Sort.Order.desc("id");
+        Sort sort = Sort.by(order);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        //when
+        PageImpl<Student> result = studentRepository.findStudentsByNamePaging(name, pageable);
+
+        System.out.println("[logging] result.getTotalElements() : " + result.getTotalElements()); // 조회된 전체 건수
+        System.out.println("[logging] result.getNumber() : " + result.getNumber()); // 현재 페이지 번호
+        System.out.println("[logging] result.getTotalPages() : " + result.getTotalPages()); // 전체 페이지 숫자
+        System.out.println("[logging] result.getContent().size() : " + result.getContent().size()); // 현재 페이지 컨텐츠 숫자
+
+        List<Student> studentList = result.getContent();
+        for (Student student : studentList) {
+            System.out.println("[logging] student info : [" + student.getId() + "] " + student.getName());
+        }
+
+        //then
+        assertThat(result.getNumber()).isEqualTo(page);
+        assertThat(result.getTotalPages()).isEqualTo(20);
+        assertThat(result.getContent().size()).isEqualTo(5);
     }
 
 }

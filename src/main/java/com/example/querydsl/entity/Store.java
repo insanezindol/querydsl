@@ -7,7 +7,7 @@ import java.util.Collection;
 
 @Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Store {
 
     @Id
@@ -28,6 +28,10 @@ public class Store {
         this.name = name;
         this.address = address;
         this.staff = staff;
+    }
+
+    public void changeName(String name) {
+        this.name = name;
     }
 
 }
