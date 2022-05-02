@@ -36,4 +36,13 @@ public class StudentCustomizedRepositoryImpl implements StudentCustomizedReposit
         return new PageImpl<>(results, pageable, totalCount);
     }
 
+    @Override
+    public Long updateAddressByName(String oldName, String newName) {
+        return jpaQueryFactory
+                .update(student)
+                .set(student.name, newName)
+                .where(student.name.containsIgnoreCase(oldName))
+                .execute();
+    }
+
 }

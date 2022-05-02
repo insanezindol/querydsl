@@ -29,4 +29,8 @@ public class Student {
         this.schoolId = schoolId;
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
 }

@@ -9,4 +9,6 @@ public interface StudentCustomizedRepository {
 
     PageImpl<Student> findStudentsByNamePaging(String name, Pageable pageable);
 
+    Long updateAddressByName(String oldName, String newName);
+
 }

@@ -2,9 +2,12 @@ package com.example.querydsl.service;
 
 import com.example.querydsl.entity.Staff;
 import com.example.querydsl.entity.Store;
+import com.example.querydsl.entity.Student;
 import com.example.querydsl.repository.StoreRepository;
+import com.example.querydsl.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +22,8 @@ import java.util.List;
 public class TestService {
 
     private final StoreRepository storeRepository;
+
+    private final StudentRepository studentRepository;
 
     public List<Store> getStore() {
         return storeRepository.findAll();
@@ -99,5 +104,17 @@ public class TestService {
         return staffNames;
     }
 
+    @Transactional
+    public void dirtyCheckingUpdate(String name) {
+        List<Student> students = studentRepository.findAll();
+        for (Student student : students) {
+            student.changeName(name);
+        }
+    }
+
+    @Transactional
+    public Long bulkUpdate(String oldName, String newName) {
+        return studentRepository.updateAddressByName(oldName, newName);
+    }
 
 }
