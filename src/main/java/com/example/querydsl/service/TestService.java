@@ -1,12 +1,16 @@
 package com.example.querydsl.service;
 
+import com.example.querydsl.entity.Staff;
 import com.example.querydsl.entity.Store;
-import com.example.querydsl.repository.SchoolRepository;
 import com.example.querydsl.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -15,8 +19,6 @@ import java.util.List;
 public class TestService {
 
     private final StoreRepository storeRepository;
-
-    private final SchoolRepository schoolRepository;
 
     public List<Store> getStore() {
         return storeRepository.findAll();
@@ -64,5 +66,38 @@ public class TestService {
                 .build();
         storeRepository.delete(store);
     }
+
+
+    @Transactional
+    public List<String> findAllStaffNames() {
+        List<Store> stores = storeRepository.findAll();
+        return filterStaffNames(stores);
+    }
+
+    @Transactional
+    public List<String> findAllStaffNamesJoinFetch() {
+        List<Store> stores = storeRepository.findAllByJoinFetch();
+        return filterStaffNames(stores);
+    }
+
+    @Transactional
+    public List<String> findAllStaffNamesEntityGraph() {
+        List<Store> stores = storeRepository.findAllByEntityGraphWithStaff();
+        return filterStaffNames(stores);
+    }
+
+    private List<String> filterStaffNames(List<Store> stores) {
+        List<String> staffNames = new ArrayList<>();
+
+        for (Store store : stores) {
+            Collection<Staff> result = store.getStaffs();
+            Iterator<Staff> iterator = result.iterator();
+            while (iterator.hasNext()) {
+                staffNames.add(iterator.next().getName());
+            }
+        }
+        return staffNames;
+    }
+
 
 }

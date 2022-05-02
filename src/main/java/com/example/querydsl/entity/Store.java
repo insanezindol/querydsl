@@ -3,7 +3,9 @@ package com.example.querydsl.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Entity
@@ -20,18 +22,23 @@ public class Store {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "store_id")
-    private Collection<Staff> staff;
+    private List<Staff> staffs = new ArrayList<>();
 
     @Builder
-    public Store(Long id, String name, String address, Collection<Staff> staff) {
+    public Store(Long id, String name, String address, List<Staff> staffs) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.staff = staff;
+        this.staffs = staffs;
     }
 
     public void changeName(String name) {
         this.name = name;
+    }
+
+    public void addStaff(Staff staff) {
+        this.staffs.add(staff);
+        staff.changeStore(this);
     }
 
 }

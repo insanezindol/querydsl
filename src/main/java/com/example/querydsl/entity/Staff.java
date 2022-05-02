@@ -17,11 +17,19 @@ public class Staff {
 
     private Integer age;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "store_id", foreignKey = @ForeignKey(name = "fk_staff_store_id"))
+    private Store store;
+
     @Builder
     public Staff(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
+    }
+
+    public void changeStore(Store store) {
+        this.store = store;
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.querydsl.repository;
 
 import com.example.querydsl.entity.Student;
-import com.example.querydsl.vo.StudentVo;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;

@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 @ActiveProfiles("local")
 @ExtendWith(SpringExtension.class)
@@ -125,7 +126,7 @@ public class JpaTest {
                 .id(storeId)
                 .name(storeName)
                 .address(storeAddress)
-                .staff(Arrays.asList(staff1, staff2))
+                .staffs(Arrays.asList(staff1, staff2))
                 .build();
 
         // when
@@ -136,7 +137,7 @@ public class JpaTest {
         // then
         Assertions.assertEquals(saveStore.getName(), storeName);
 
-        Collection<Staff> result = saveStore.getStaff();
+        List<Staff> result = saveStore.getStaffs();
         Iterator<Staff> iterator = result.iterator();
         Staff next = iterator.next();
         Assertions.assertEquals(next.getName(), staffName);
@@ -169,7 +170,7 @@ public class JpaTest {
                 .id(storeId)
                 .name(storeName)
                 .address(storeAddress)
-                .staff(Arrays.asList(staff1, staff2))
+                .staffs(Arrays.asList(staff1, staff2))
                 .build();
 
         // when
