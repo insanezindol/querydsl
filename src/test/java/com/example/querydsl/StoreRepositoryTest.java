@@ -3,6 +3,7 @@ package com.example.querydsl;
 import com.example.querydsl.entity.Staff;
 import com.example.querydsl.entity.Store;
 import com.example.querydsl.repository.StoreRepository;
+import com.example.querydsl.repository.support.StoreRepositorySupport;
 import com.example.querydsl.service.TestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -29,6 +34,9 @@ public class StoreRepositoryTest {
 
     @Autowired
     StoreRepository storeRepository;
+
+    @Autowired
+    StoreRepositorySupport storeRepositorySupport;
 
     @BeforeEach
     void setup() {
@@ -114,6 +122,52 @@ public class StoreRepositoryTest {
         //then
         assertThat(staffNames).isNotNull();
         assertThat(staffNames).hasSize(20);
+    }
+
+    @Test
+    @DisplayName("querydsl join 시 paging 테스트 - pageable 사용 경우 ")
+    void findStaffJoinOrderPagingTest() {
+        //given -> @BeforeEach
+
+        // when
+        Sort.Order storeNameOrder = Sort.Order.asc("name");          // store
+        Sort.Order staffNameOrder = Sort.Order.asc("staffs.name");   // staff
+
+        Sort sort = Sort.by(storeNameOrder, staffNameOrder);
+        Pageable pageable = PageRequest.of(0, 10, sort);
+
+        // then
+        PageImpl<Store> result = storeRepositorySupport.findStoreJoinOrderPaging(pageable);  // test
+        /*
+        select
+            count(store0_.id) as col_0_0_
+        from store store0_
+            inner join staff staffs1_
+            on store0_.id=staffs1_.store_id;
+        select
+            store0_.id as id1_4_, store0_.address as address2_4_, store0_.name as name3_4_
+        from store store0_
+            inner join staff staffs1_
+            on store0_.id=staffs1_.store_id
+        order by
+            store0_.name asc, staffs1_.name asc
+        limit 10;
+         */
+
+        System.out.println("[logging] result.getTotalElements() : " + result.getTotalElements()); // 조회된 전체 건수
+        System.out.println("[logging] result.getNumber() : " + result.getNumber()); // 현재 페이지 번호
+        System.out.println("[logging] result.getTotalPages() : " + result.getTotalPages()); // 전체 페이지 숫자
+        System.out.println("[logging] result.getContent().size() : " + result.getContent().size()); // 현재 페이지 컨텐츠 숫자
+
+        List<Store> stores = result.getContent();
+        for (Store store : stores) {
+            System.out.println("[logging] Store : [" + store.getId() + "] " + store.getName());
+        }
+
+        //then
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getTotalPages()).isEqualTo(2);
+        assertThat(result.getContent().size()).isEqualTo(10);
     }
 
 }

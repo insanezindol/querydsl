@@ -1,10 +1,12 @@
 package com.example.querydsl.entity;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -37,6 +39,9 @@ public class Store {
     }
 
     public void addStaff(Staff staff) {
+        if (this.staffs == null) {
+            this.staffs = new ArrayList<>();
+        }
         this.staffs.add(staff);
         staff.changeStore(this);
     }
