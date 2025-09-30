@@ -158,7 +158,3 @@ implementation 'com.querydsl:querydsl-apt'
 -   [QueryDSL 공식 문서](http://www.querydsl.com/)
 -   [Spring Data JPA 문서](https://spring.io/projects/spring-data-jpa)
 -   [Spring Boot 문서](https://spring.io/projects/spring-boot)
-
-## 📄 라이센스
-
-이 프로젝트는 학습 목적으로 제작되었습니다.
